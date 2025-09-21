@@ -284,14 +284,53 @@
   .main-content{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;align-items:start}
 }
 
+
+/* === Fixed Login Button (top-right) === */
+.btn-login{
+  position:fixed; top:12px; right:12px; z-index:1000;
+  background:#06C755; color:#fff; border:none; border-radius:999px;
+  padding:10px 14px; font-weight:700; box-shadow:0 4px 14px rgba(0,0,0,.18);
+  cursor:pointer; transition:transform .15s ease, box-shadow .2s ease;
+}
+.btn-login:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,.22); }
+.btn-login:active{ transform:translateY(0); }
+
+/* === Toast === */
+.toast{
+  position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
+  min-width:240px; max-width:90vw; padding:12px 16px; border-radius:12px;
+  background:rgba(0,0,0,.84); color:#fff; font-weight:600; z-index:1100;
+  box-shadow:0 10px 24px rgba(0,0,0,.25); opacity:0; pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+
 </style>
 </head>
 <body>
+  <button id="btnLineLogin" class="btn-login" aria-label="Login with LINE">Login with LINE</button>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="container">
         <div class="header">
             <h1>🎓 เกมส์บันชีคำศัพท์</h1>
             <p>ภาษาอังกฤษพื้นฐาน ระดับชั้นประถมศึกษา</p>
         </div>
+
+<div class="control-bar" id="controlBar">
+  <div id="userBadge" class="badge" style="display:none">
+    <img id="userAvatar" alt="avatar">
+    <span id="userName" class="name"></span>
+    <span id="userRole" class="role" style="opacity:.8"></span>
+  </div>
+  <div class="control">
+    <label for="wordCount">สุ่มคำจำนวน</label>
+    <input id="wordCount" type="number" min="1" value="20">
+  </div>
+  <div class="control total-words">
+    รวมคำทั้งหมดในชั้นนี้: <b id="totalWords">—</b> คำ
+  </div>
+</div>
+
 
         <div class="grade-selector" id="gradeSelector">
             <h3>เลือกระดับชั้นเรียน</h3>
