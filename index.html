@@ -268,7 +268,23 @@
                 max-width: 200px;
             }
         }
-    </style>
+    
+/* === Responsive + Word Stats === */
+.word-stats{margin-top:12px;background:rgba(255,255,255,.18);border:1px dashed rgba(255,255,255,.4);border-radius:12px;padding:10px}
+.word-stats .ws-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+@media (max-width:640px){
+  .container{padding:16px}
+  .card{padding:18px}
+  .stats .stat-item{min-width:90px}
+  .grade-buttons{gap:8px}
+}
+@media (min-width:1024px){
+  .container{max-width:980px}
+  .card{min-height:360px}
+  .main-content{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;align-items:start}
+}
+
+</style>
 </head>
 <body>
     <div class="container">

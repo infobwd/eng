@@ -122,7 +122,10 @@ startGame() {
 
     this.updateCard();
     this.updateScore();
-    this.updateProgress();
+    
+        // Start analytics session
+        if (window.Analytics && window.Analytics.startSession) { window.Analytics.startSession(this.currentGrade); }
+this.updateProgress();
 
     this.gameArea.classList.add('slide-up');
 }
@@ -136,7 +139,10 @@ startGame() {
 
         const currentWord = this.currentWords[this.currentIndex];
         
-        // Update card content
+        
+        // Render per-word stats
+        if (window.Analytics && window.Analytics.renderWordStats) { window.Analytics.renderWordStats(this.currentGrade, currentWord.word); }
+// Update card content
         this.word.textContent = currentWord.word;
         this.wordType.textContent = currentWord.type;
         this.meaning.textContent = currentWord.meaning;
@@ -209,6 +215,8 @@ startGame() {
     }
 
     markAnswer(isCorrect) {
+        const currentWord = this.currentWords[this.currentIndex];
+        if (window.Analytics && window.Analytics.recordAnswer) { window.Analytics.recordAnswer(this.currentGrade, currentWord.word, isCorrect); }
         if (isCorrect) {
             this.correctCount++;
             this.showNotification('ถูกต้อง! 🎉', 'success');
