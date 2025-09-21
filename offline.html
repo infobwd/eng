@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ออฟไลน์ - เกมส์บันชีคำศัพท์</title>
+    <style>
+        body {
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .retry-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .feature-list {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .feature-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li::before {
+            content: "✨ ";
+            margin-right: 5px;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="offline-icon">📡</div>
+        <h1>ไม่มีการเชื่อมต่ออินเทอร์เน็ต</h1>
+        <p>ขออภัย เกิดปัญหาการเชื่อมต่อ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</p>
+        
+        <button class="retry-btn" onclick="checkConnection()">
+            🔄 ลองใหม่
+        </button>
+        
+        <button class="retry-btn" onclick="goHome()">
+            🏠 กลับหน้าหลัก
+        </button>
+        
+        <div class="feature-list">
+            <h3>🎮 ฟีเจอร์ที่ใช้งานได้แบบออฟไลน์:</h3>
+            <ul>
+                <li>เล่นเกมส์คำศัพท์ทุกระดับ</li>
+                <li>ฟังเสียงพูดคำศัพท์</li>
+                <li>ดูคะแนนและสถิติ</li>
+                <li>ใช้งานโหมดเรียน</li>
+            </ul>
+        </div>
+        
+        <div id="connectionStatus" class="status offline">
+            🔴 ออฟไลน์
+        </div>
+    </div>
+
+    <script>
+        // ตรวจสอบสถานะการเชื่อมต่อ
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                status.className = 'status online';
+                status.innerHTML = '🟢 ออนไลน์';
+            } else {
+                status.className = 'status offline';
+                status.innerHTML = '🔴 ออฟไลน์';
+            }
+        }
+
+        // ตรวจสอบการเชื่อมต่อ
+        function checkConnection() {
+            if (navigator.onLine) {
+                // ลองเชื่อมต่อจริง
+                fetch('/', { 
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                })
+                .then(() => {
+                    // เชื่อมต่อได้ กลับไปหน้าหลัก
+                    window.location.href = '/';
+                })
+                .catch(() => {
+                    // ยังเชื่อมต่อไม่ได้
+                    showNotification('ยังไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่อีกครั้ง', 'error');
+                });
+            } else {
+                showNotification('กรุณาเปิดการเชื่อมต่ออินเทอร์เน็ต', 'warning');
+            }
+        }
+
+        // กลับหน้าหลัก
+        function goHome() {
+            // พยายามโหลดจาก cache
+            window.location.href = '/';
+        }
+
+        // แสดงการแจ้งเตือน
+        function showNotification(message, type) {
+            // สร้าง notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            
+            // กำหนดสีตามประเภท
+            switch(type) {
+                case 'error':
+                    notification.style.background = '#dc3545';
+                    break;
+                case 'warning':
+                    notification.style.background = '#ffc107';
+                    notification.style.color = '#212529';
+                    break;
+                default:
+                    notification.style.background = '#17a2b8';
+                    break;
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // แสดง notification
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // ซ่อน notification
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Event listeners
+        window.addEventListener('online', () => {
+            updateConnectionStatus();
+            showNotification('กลับมาออนไลน์แล้ว! 🎉', 'success');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        });
+
+        window.addEventListener('offline', () => {
+            updateConnectionStatus();
+            showNotification('การเชื่อมต่อขาดหาย', 'error');
+        });
+
+        // เริ่มต้น
+        document.addEventListener('DOMContentLoaded', () => {
+            updateConnectionStatus();
+            
+            // ตรวจสอบการเชื่อมต่อทุก 30 วินาที
+            setInterval(updateConnectionStatus, 30000);
+        });
+
+        // Service Worker Messages
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'CACHE_UPDATED') {
+                    showNotification('เนื้อหาใหม่พร้อมใช้งาน', 'info');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
