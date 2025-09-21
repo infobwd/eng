@@ -1,957 +1,275 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เกมส์บันชีคำศัพท์ภาษาอังกฤษพื้นฐาน</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .header {
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .grade-selector {
-            margin-bottom: 30px;
-        }
-
-        .grade-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .grade-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 16px;
-        }
-
-        .grade-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-
-        .grade-btn.active {
-            background: #4c51bf;
-            box-shadow: 0 5px 15px rgba(76, 81, 191, 0.4);
-        }
-
-        .game-area {
-            display: none;
-        }
-
-        .score-board {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .score-item {
-            text-align: center;
-        }
-
-        .score-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .score-label {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .flashcard {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 40px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .flashcard:hover {
-            transform: scale(1.02);
-        }
-
-        .flashcard.flipped {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        }
-
-        .word {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .meaning {
-            font-size: 20px;
-            opacity: 0.9;
-        }
-
-        .word-type {
-            font-size: 16px;
-            opacity: 0.8;
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-
-        .btn:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-
-        .btn.correct {
-            background: #48bb78;
-        }
-
-        .btn.wrong {
-            background: #f56565;
-        }
-
-        .btn.next {
-            background: #ed8936;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-
-        .flip-hint {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .study-mode {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f4f8;
-            border-radius: 10px;
-        }
-
-        .study-mode h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .results {
-            display: none;
-            text-align: center;
-        }
-
-        .results h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .final-score {
-            font-size: 48px;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-
-            .word {
-                font-size: 28px;
-            }
-
-            .meaning {
-                font-size: 18px;
-            }
-
-            .flashcard {
-                padding: 40px 20px;
-                min-height: 180px;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 200px;
-            }
-        }
     
-/* === Responsive + Word Stats === */
-.word-stats{margin-top:12px;background:rgba(255,255,255,.18);border:1px dashed rgba(255,255,255,.4);border-radius:12px;padding:10px}
-.word-stats .ws-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
-@media (max-width:640px){
-  .container{padding:16px}
-  .card{padding:18px}
-  .stats .stat-item{min-width:90px}
-  .grade-buttons{gap:8px}
-}
-@media (min-width:1024px){
-  .container{max-width:980px}
-  .card{min-height:360px}
-  .main-content{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;align-items:start}
-}
-
-
-/* === Fixed Login Button (top-right) === */
-.btn-login{
-  position:fixed; top:12px; right:12px; z-index:1000;
-  background:#06C755; color:#fff; border:none; border-radius:999px;
-  padding:10px 14px; font-weight:700; box-shadow:0 4px 14px rgba(0,0,0,.18);
-  cursor:pointer; transition:transform .15s ease, box-shadow .2s ease;
-}
-.btn-login:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,.22); }
-.btn-login:active{ transform:translateY(0); }
-
-/* === Toast === */
-.toast{
-  position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
-  min-width:240px; max-width:90vw; padding:12px 16px; border-radius:12px;
-  background:rgba(0,0,0,.84); color:#fff; font-weight:600; z-index:1100;
-  box-shadow:0 10px 24px rgba(0,0,0,.25); opacity:0; pointer-events:none;
-  transition:opacity .2s ease, transform .2s ease;
-}
-.toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
-
-</style>
-
-  <style> /* kanit-override */
-    body { font-family: 'Kanit', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans Thai', sans-serif !important; }
-  </style>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- LINE LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        .game-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .flip-animation {
+            animation: flip 0.6s ease;
+        }
+        
+        @keyframes flip {
+            0% { transform: rotateY(0); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
-  <button id="btnLineLogin" class="btn-login" aria-label="Login with LINE">Login with LINE</button>
-  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-    <div class="container">
-        <div class="header">
-            <h1>🎓 เกมส์บันชีคำศัพท์</h1>
-            <p>ภาษาอังกฤษพื้นฐาน ระดับชั้นประถมศึกษา</p>
+<body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 min-h-screen">
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                🎓 เกมส์บันชีคำศัพท์
+            </h1>
+            <p class="text-white/90 text-lg">ภาษาอังกฤษระดับประถมศึกษา</p>
         </div>
-
-<div class="control-bar" id="controlBar">
-  <div id="userBadge" class="badge" style="display:none">
-    <img id="userAvatar" alt="avatar">
-    <span id="userName" class="name"></span>
-    <span id="userRole" class="role" style="opacity:.8"></span>
-  </div>
-  <div class="control">
-    <label for="wordCount">สุ่มคำจำนวน</label>
-    <input id="wordCount" type="number" min="1" value="20">
-  </div>
-  <div class="control total-words">
-    รวมคำทั้งหมดในชั้นนี้: <b id="totalWords">—</b> คำ
-  </div>
-</div>
-
-
-        <div class="grade-selector" id="gradeSelector">
-            <h3>เลือกระดับชั้นเรียน</h3>
-            <div class="grade-buttons">
-                <button class="grade-btn" data-grade="1">ป.1 (155 คำ)</button>
-                <button class="grade-btn" data-grade="2">ป.2 (159 คำ)</button>
-                <button class="grade-btn" data-grade="3">ป.3 (154 คำ)</button>
-                <button class="grade-btn" data-grade="4">ป.4 (258 คำ)</button>
-                <button class="grade-btn" data-grade="5">ป.5 (254 คำ)</button>
-                <button class="grade-btn" data-grade="6">ป.6 (253 คำ)</button>
+        
+        <!-- User Badge (Hidden by default) -->
+        <div id="userBadge" class="bg-white/20 backdrop-blur rounded-lg p-3 mb-4 hidden">
+            <div class="flex items-center gap-3">
+                <img id="userAvatar" class="w-10 h-10 rounded-full" alt="avatar">
+                <div>
+                    <div id="userName" class="text-white font-semibold"></div>
+                    <div id="userRole" class="text-white/80 text-sm"></div>
+                </div>
             </div>
         </div>
-
-        <div class="game-area" id="gameArea">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-
-            <div class="score-board">
-                <div class="score-item">
-                    <div class="score-number" id="correctScore">0</div>
-                    <div class="score-label">ถูก</div>
+        
+        <!-- Grade Selector -->
+        <div id="gradeSelector" class="bg-white rounded-2xl shadow-2xl p-6">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">เลือกระดับชั้นเรียน</h3>
+            
+            <!-- Word Count Control -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                <label for="wordCount" class="block text-gray-700 font-medium mb-2">
+                    จำนวนคำศัพท์ที่ต้องการเล่น:
+                </label>
+                <div class="flex items-center gap-3">
+                    <input 
+                        type="number" 
+                        id="wordCount" 
+                        min="5" 
+                        max="50" 
+                        value="20" 
+                        class="w-24 px-3 py-2 border-2 border-purple-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                    >
+                    <span class="text-gray-600">คำ</span>
+                    <span id="totalWordsInfo" class="ml-auto text-sm text-gray-500"></span>
                 </div>
-                <div class="score-item">
-                    <div class="score-number" id="currentCard">1</div>
-                    <div class="score-label">คำที่</div>
+            </div>
+            
+            <!-- Grade Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <button class="grade-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all" data-grade="1">
+                    ป.1<br><span class="text-sm font-normal">(155 คำ)</span>
+                </button>
+                <button class="grade-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all" data-grade="2">
+                    ป.2<br><span class="text-sm font-normal">(159 คำ)</span>
+                </button>
+                <button class="grade-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all" data-grade="3">
+                    ป.3<br><span class="text-sm font-normal">(154 คำ)</span>
+                </button>
+                <button class="grade-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all" data-grade="4">
+                    ป.4<br><span class="text-sm font-normal">(30 คำ)</span>
+                </button>
+                <button class="grade-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all" data-grade="5">
+                    ป.5<br><span class="text-sm font-normal">(30 คำ)</span>
+                </button>
+                <button class="grade-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all" data-grade="6">
+                    ป.6<br><span class="text-sm font-normal">(30 คำ)</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Game Area -->
+        <div id="gameArea" class="hidden">
+            <!-- Progress Bar -->
+            <div class="bg-white/20 backdrop-blur rounded-full h-3 mb-6">
+                <div id="progressFill" class="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            
+            <!-- Score Board -->
+            <div class="bg-white rounded-xl shadow-lg p-4 mb-6">
+                <div class="grid grid-cols-3 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-green-500" id="correctScore">0</div>
+                        <div class="text-gray-600 text-sm">ถูก</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-500">
+                            <span id="currentCard">1</span>/<span id="totalCards">20</span>
+                        </div>
+                        <div class="text-gray-600 text-sm">คำที่</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-red-500" id="wrongScore">0</div>
+                        <div class="text-gray-600 text-sm">ผิด</div>
+                    </div>
                 </div>
-                <div class="score-item">
-                    <div class="score-number" id="wrongScore">0</div>
-                    <div class="score-label">ผิด</div>
+            </div>
+            
+            <!-- Flashcard -->
+            <div id="flashcard" class="game-card rounded-2xl shadow-2xl p-8 mb-6 text-center cursor-pointer min-h-[250px] flex flex-col justify-center items-center relative">
+                <div class="absolute top-4 right-4 bg-white/20 px-3 py-1 rounded-full text-white text-sm" id="flipHint">
+                    👆 แตะเพื่อดูคำแปล
                 </div>
+                <div class="text-5xl font-bold text-white mb-3" id="word">Loading...</div>
+                <div class="text-white/80 text-lg mb-4" id="wordType">(n.)</div>
+                <div class="text-2xl text-yellow-300 font-medium hidden" id="meaning">กำลังโหลด...</div>
             </div>
-
-            <div class="flashcard" id="flashcard">
-                <div class="flip-hint">👆 แตะเพื่อดูคำแปล</div>
-                <div class="word" id="word">apple</div>
-                <div class="word-type" id="wordType">n.</div>
-                <div class="meaning" id="meaning" style="display: none;">แอปเปิ้ล</div>
+            
+            <!-- Control Buttons -->
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                <button id="wrongBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-all">
+                    ❌ ผิด
+                </button>
+                <button id="soundBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-all">
+                    🔊 ฟัง
+                </button>
+                <button id="correctBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all">
+                    ✅ ถูก
+                </button>
             </div>
-
-            <div class="controls">
-                <button class="btn wrong" id="wrongBtn">❌ ผิด</button>
-                <button class="btn correct" id="correctBtn">✅ ถูก</button>
-                <button class="btn next" id="nextBtn">➡️ ถัดไป</button>
-            </div>
-
-            <div class="study-mode">
-                <label>
-                    <input type="checkbox" id="studyMode"> โหมดเรียน (แสดงคำแปลเสมอ)
+            
+            <!-- Study Mode Toggle -->
+            <div class="bg-white rounded-lg p-4">
+                <label class="flex items-center justify-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="studyMode" class="w-5 h-5 text-purple-600">
+                    <span class="text-gray-700">โหมดเรียน (แสดงคำแปลเสมอ)</span>
                 </label>
             </div>
         </div>
-
-        <div class="results" id="results">
-            <h2>🎉 เสร็จสิ้น!</h2>
-            <div class="final-score" id="finalScore">0%</div>
-            <p id="resultMessage">ยอดเยี่ยม!</p>
-            <button class="btn" id="restartBtn">🔄 เริ่มใหม่</button>
+        
+        <!-- Results Screen -->
+        <div id="results" class="hidden bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">🎉 เสร็จสิ้น!</h2>
+            
+            <div class="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" id="finalScore">
+                0%
+            </div>
+            
+            <div class="text-xl mb-6" id="resultMessage">ผลการเล่น</div>
+            
+            <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+                <div class="bg-green-100 rounded-lg p-3">
+                    <div class="text-2xl font-bold text-green-600" id="finalCorrect">0</div>
+                    <div class="text-gray-600 text-sm">ถูก</div>
+                </div>
+                <div class="bg-red-100 rounded-lg p-3">
+                    <div class="text-2xl font-bold text-red-600" id="finalWrong">0</div>
+                    <div class="text-gray-600 text-sm">ผิด</div>
+                </div>
+                <div class="bg-purple-100 rounded-lg p-3">
+                    <div class="text-2xl font-bold text-purple-600" id="finalTotal">0</div>
+                    <div class="text-gray-600 text-sm">ทั้งหมด</div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 justify-center">
+                <button id="restartBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-lg transition-all">
+                    🔄 เริ่มใหม่
+                </button>
+                <button id="shareBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-all">
+                    📤 แชร์ผล
+                </button>
+            </div>
         </div>
+        
+        <!-- Confetti Container -->
+        <div id="confettiContainer" class="fixed inset-0 pointer-events-none z-50"></div>
     </div>
-
+    
+    <!-- Include vocabulary data -->
+    <script src="data.js"></script>
+    
+    <!-- Main game script -->
+    <script src="game.js"></script>
+    
+    <!-- Initialize LINE LIFF if needed -->
     <script>
-        // ข้อมูลคำศัพท์จากเอกสาร
-        const vocabularyData = {
-            1: [
-                {word: "ant", type: "n.", meaning: "มด"},
-                {word: "apple", type: "n.", meaning: "แอปเปิ้ล"},
-                {word: "bag", type: "n.", meaning: "กระเป๋า,ย่าม"},
-                {word: "ball", type: "n.", meaning: "ลูกบอล"},
-                {word: "banana", type: "n.", meaning: "กล้วย"},
-                {word: "bat", type: "n.", meaning: "ค้างคาว"},
-                {word: "bean", type: "n.", meaning: "ต้นถั่ว,ฝักถั่ว"},
-                {word: "bear", type: "n.", meaning: "หมี"},
-                {word: "bee", type: "n.", meaning: "ผึ้ง"},
-                {word: "big", type: "adj.", meaning: "ใหญ่"},
-                {word: "bin", type: "n.", meaning: "ถังขยะ"},
-                {word: "bird", type: "n.", meaning: "นก"},
-                {word: "birthday", type: "n.", meaning: "วันเกิด"},
-                {word: "book", type: "n.", meaning: "หนังสือ"},
-                {word: "box", type: "n.", meaning: "กล่อง"},
-                {word: "boy", type: "n.", meaning: "เด็กผู้ชาย"},
-                {word: "bread", type: "n.", meaning: "ขนมปัง"},
-                {word: "broom", type: "n.", meaning: "ไม้กวาด"},
-                {word: "brother", type: "n.", meaning: "พี่ชาย,น้องชาย"},
-                {word: "bus", type: "n.", meaning: "รถประจำทาง"},
-                {word: "cake", type: "n.", meaning: "ขนมเค้ก"},
-                {word: "candle", type: "n.", meaning: "เทียนไข"},
-                {word: "car", type: "n.", meaning: "รถยนต์"},
-                {word: "cat", type: "n.", meaning: "แมว"},
-                {word: "chair", type: "n.", meaning: "เก้าอี้"},
-                {word: "class", type: "n.", meaning: "ชั้นเรียน"},
-                {word: "close", type: "v.", meaning: "ปิด"},
-                {word: "count", type: "v.", meaning: "นับ"},
-                {word: "cry", type: "v.", meaning: "ร้องไห้"},
-                {word: "crayon", type: "n.", meaning: "สีเทียน"},
-                {word: "cup", type: "n.", meaning: "ถ้วยกาแฟ"},
-                {word: "cut", type: "v.", meaning: "ตัด"},
-                {word: "dad", type: "n.", meaning: "พ่อ"},
-                {word: "dance", type: "v.", meaning: "เต้นรำ"},
-                {word: "desk", type: "n.", meaning: "โต๊ะเรียน"},
-                {word: "dog", type: "n.", meaning: "สุนัข"},
-                {word: "door", type: "n.", meaning: "ประตู"},
-                {word: "dot", type: "n.", meaning: "จุด"},
-                {word: "ear", type: "n.", meaning: "หู"},
-                {word: "egg", type: "n.", meaning: "ไข่"},
-                {word: "eraser", type: "n.", meaning: "ยางลบ"},
-                {word: "eye", type: "n.", meaning: "ตา"},
-                {word: "face", type: "n.", meaning: "หน้า,ใบหน้า"},
-                {word: "fan", type: "n.", meaning: "พัดลม"},
-                {word: "farm", type: "n.", meaning: "ไร่นา,ฟาร์ม"},
-                {word: "farmer", type: "n.", meaning: "ชาวนา"},
-                {word: "father", type: "n.", meaning: "บิดา"},
-                {word: "fish", type: "n.", meaning: "ปลา"},
-                {word: "flower", type: "n.", meaning: "ดอกไม้"},
-                {word: "food", type: "n.", meaning: "อาหาร"},
-                {word: "foot", type: "n.", meaning: "เท้า"},
-                {word: "fox", type: "n.", meaning: "สุนัขจิ้งจอก"},
-                {word: "fruit", type: "n.", meaning: "ผลไม้"},
-                {word: "fun", type: "n.", meaning: "ความสนุกสนาน"},
-                {word: "giraffe", type: "n.", meaning: "ยีราฟ"},
-                {word: "girl", type: "n.", meaning: "เด็กผู้หญิง"},
-                {word: "glass", type: "n.", meaning: "แก้วน้ำ"},
-                {word: "go", type: "v.", meaning: "ไป"},
-                {word: "goat", type: "n.", meaning: "แพะ"},
-                {word: "good", type: "adj.", meaning: "ดี"},
-                {word: "goodbye", type: "interj.", meaning: "ลาก่อน"},
-                {word: "hair", type: "n.", meaning: "ผม"},
-                {word: "ham", type: "n.", meaning: "เนื้อขาหมูรมควัน"},
-                {word: "happy", type: "adj.", meaning: "มีความสุข"},
-                {word: "head", type: "n.", meaning: "ศีรษะ"},
-                {word: "hello", type: "interj.", meaning: "สวัสดี"},
-                {word: "house", type: "n.", meaning: "บ้าน"},
-                {word: "ice", type: "n.", meaning: "น้ำแข็ง"},
-                {word: "ice cream", type: "n.", meaning: "ไอศกรีม"},
-                {word: "jar", type: "n.", meaning: "โอ่ง"},
-                {word: "key", type: "n.", meaning: "ลูกกุญแจ"},
-                {word: "kick", type: "v.", meaning: "เตะ"},
-                {word: "king", type: "n.", meaning: "พระราชา"},
-                {word: "kid", type: "n.", meaning: "เด็ก"},
-                {word: "leg", type: "n.", meaning: "ขา"},
-                {word: "lemon", type: "n.", meaning: "มะนาว"},
-                {word: "line", type: "n.", meaning: "เส้น,บรรทัด"},
-                {word: "lion", type: "n.", meaning: "สิงโต"},
-                {word: "listen", type: "v.", meaning: "ฟัง"},
-                {word: "long", type: "adj.", meaning: "ยาว"},
-                {word: "look", type: "v.", meaning: "ดู,มองดู"},
-                {word: "love", type: "v.", meaning: "รัก"},
-                {word: "meet", type: "v.", meaning: "พบ, เจอ"},
-                {word: "man", type: "n.", meaning: "ผู้ชาย"},
-                {word: "map", type: "n.", meaning: "แผนที่"},
-                {word: "milk", type: "n.", meaning: "นม"},
-                {word: "mom", type: "n.", meaning: "แม่"},
-                {word: "monkey", type: "n.", meaning: "ลิง"},
-                {word: "moon", type: "n.", meaning: "ดวงจันทร์"},
-                {word: "mother", type: "n.", meaning: "มารดา"},
-                {word: "mouth", type: "n.", meaning: "ปาก"},
-                {word: "name", type: "n.", meaning: "ชื่อ"},
-                {word: "nose", type: "n.", meaning: "จมูก"},
-                {word: "open", type: "v.", meaning: "เปิด"},
-                {word: "orange", type: "n.", meaning: "ส้ม"},
-                {word: "owl", type: "n.", meaning: "นกฮูก"},
-                {word: "pan", type: "n.", meaning: "กระทะ"},
-                {word: "panda", type: "n.", meaning: "หมีแพนด้า"},
-                {word: "papaya", type: "n.", meaning: "มะละกอ"},
-                {word: "park", type: "n.", meaning: "สวนสาธารณะ"},
-                {word: "pear", type: "n.", meaning: "ลูกแพร์"},
-                {word: "pen", type: "n.", meaning: "ปากกา"},
-                {word: "pencil", type: "n.", meaning: "ดินสอ"},
-                {word: "pet", type: "n.", meaning: "สัตว์เลี้ยง"},
-                {word: "play", type: "v.", meaning: "เล่น"},
-                {word: "point", type: "v./n.", meaning: "ชี้, คะแนน, จุด"},
-                {word: "pool", type: "n.", meaning: "สระน้ำ"},
-                {word: "queen", type: "n.", meaning: "ราชินี"},
-                {word: "rabbit", type: "n.", meaning: "กระต่าย"},
-                {word: "rat", type: "n.", meaning: "หนู"},
-                {word: "ring", type: "n.", meaning: "แหวน"},
-                {word: "roof", type: "n.", meaning: "หลังคา"},
-                {word: "room", type: "n.", meaning: "ห้อง"},
-                {word: "ruler", type: "n.", meaning: "ไม้บรรทัด"},
-                {word: "sad", type: "adj.", meaning: "เศร้า"},
-                {word: "salad", type: "n.", meaning: "สลัดผัก"},
-                {word: "say", type: "v.", meaning: "พูด"},
-                {word: "school", type: "n.", meaning: "โรงเรียน"},
-                {word: "see", type: "v.", meaning: "เห็น"},
-                {word: "sheep", type: "n.", meaning: "แกะ"},
-                {word: "ship", type: "n.", meaning: "เรือ"},
-                {word: "short", type: "adj.", meaning: "สั้น,เตี้ย"},
-                {word: "show", type: "v.", meaning: "แสดง"},
-                {word: "sing", type: "v.", meaning: "ร้องเพลง"},
-                {word: "sister", type: "n.", meaning: "พี่สาว,น้องสาว"},
-                {word: "sit", type: "v.", meaning: "นั่ง"},
-                {word: "small", type: "adj.", meaning: "เล็ก"},
-                {word: "smell", type: "v.", meaning: "ได้กลิ่น,ดมกลิ่น"},
-                {word: "snake", type: "n.", meaning: "งู"},
-                {word: "song", type: "n.", meaning: "เพลง"},
-                {word: "stand", type: "v.", meaning: "ยืน"},
-                {word: "star", type: "n.", meaning: "ดวงดาว"},
-                {word: "start", type: "v.", meaning: "เริ่ม"},
-                {word: "stop", type: "v.", meaning: "หยุด"},
-                {word: "student", type: "n.", meaning: "นักเรียน"},
-                {word: "sun", type: "n.", meaning: "ดวงอาทิตย์"},
-                {word: "swim", type: "v.", meaning: "ว่ายน้ำ"},
-                {word: "T.V.", type: "n.", meaning: "โทรทัศน์"},
-                {word: "table", type: "n.", meaning: "โต๊ะ"},
-                {word: "tall", type: "adj.", meaning: "สูง"},
-                {word: "tea", type: "n.", meaning: "น้ำชา"},
-                {word: "teacher", type: "n.", meaning: "ครู"},
-                {word: "thank you", type: "n.", meaning: "การแสดงความขอบคุณ"},
-                {word: "tomato", type: "n.", meaning: "มะเขือเทศ"},
-                {word: "top", type: "n.", meaning: "ลูกข่าง"},
-                {word: "toy", type: "n.", meaning: "ของเล่น"},
-                {word: "tree", type: "n.", meaning: "ต้นไม้"},
-                {word: "ugly", type: "adj.", meaning: "น่าเกลียด"},
-                {word: "van", type: "n.", meaning: "รถตู้"},
-                {word: "walk", type: "v.", meaning: "เดิน"},
-                {word: "water", type: "n.", meaning: "น้ำ"},
-                {word: "wig", type: "n.", meaning: "ผมปลอม"},
-                {word: "woman", type: "n.", meaning: "ผู้หญิง"},
-                {word: "zebra", type: "n.", meaning: "ม้าลาย"},
-                {word: "zoo", type: "n.", meaning: "สวนสัตว์"}
-            ],
-            2: [
-                {word: "again", type: "adv.", meaning: "อีกครั้ง"},
-                {word: "alphabet", type: "n.", meaning: "พยัญชนะ"},
-                {word: "animal", type: "n.", meaning: "สัตว์"},
-                {word: "answer", type: "n.", meaning: "การตอบคำถาม, คำตอบ"},
-                {word: "arm", type: "n.", meaning: "แขน"},
-                {word: "artist", type: "n.", meaning: "ศิลปิน"},
-                {word: "ask", type: "v.", meaning: "ถาม"},
-                {word: "aunt", type: "n.", meaning: "ป้า"},
-                {word: "bakery", type: "n.", meaning: "ร้านขายขนมอบ"},
-                {word: "balloon", type: "n.", meaning: "ลูกโป่ง"},
-                {word: "bank", type: "n.", meaning: "ธนาคาร"},
-                {word: "bed", type: "n.", meaning: "เตียงนอน"},
-                {word: "board", type: "n.", meaning: "กระดาน"},
-                {word: "boat", type: "n.", meaning: "เรือ"},
-                {word: "boots", type: "n.", meaning: "รองเท้าหุ้มข้อหรือหุ้มขา"},
-                {word: "bottle", type: "n.", meaning: "ขวด"},
-                {word: "bowl", type: "n.", meaning: "ชาม"},
-                {word: "butterfly", type: "n.", meaning: "ผีเสื้อ"},
-                {word: "can", type: "n., v.", meaning: "กระป๋อง. สามารถ"},
-                {word: "candy", type: "n.", meaning: "ลูกอม"},
-                {word: "cap", type: "n.", meaning: "หมวกแก็ป"},
-                {word: "card", type: "n.", meaning: "บัตรอวยพร"},
-                {word: "chant", type: "n.", meaning: "บทพูดเข้าจังหวะ"},
-                {word: "chat", type: "v.", meaning: "คุยเล่น"},
-                {word: "check", type: "v., n.", meaning: "ตรวจสอบ, การตรวจสอบ"},
-                {word: "cheese", type: "n.", meaning: "เนยแข็ง"},
-                {word: "cherry", type: "n.", meaning: "ผลเชอร์รี่"},
-                {word: "chicken", type: "n.", meaning: "ไก่, เนื้อไก่"},
-                {word: "children", type: "n.", meaning: "เด็กหลายคน"},
-                {word: "chilli", type: "n.", meaning: "พริก"},
-                {word: "chip", type: "n.", meaning: "แผ่นมันฝรั่งทอดกรอบ"},
-                {word: "circle", type: "n.", meaning: "วงกลม"},
-                {word: "clap", type: "v.", meaning: "ปรบมือ"},
-                {word: "clean", type: "adj.", meaning: "สะอาด"},
-                {word: "clock", type: "n.", meaning: "นาฬิกาติดผนัง"},
-                {word: "cook", type: "v.", meaning: "ปรุงหรือทำอาหาร"},
-                {word: "cookie", type: "n.", meaning: "ขนมอบ"},
-                {word: "cool", type: "adj.", meaning: "เย็น"},
-                {word: "cow", type: "n.", meaning: "วัวตัวเมีย"},
-                {word: "dish", type: "n.", meaning: "จาน"},
-                {word: "donkey", type: "n.", meaning: "ลา"},
-                {word: "elephant", type: "n.", meaning: "ช้าง"},
-                {word: "enjoy", type: "v.", meaning: "สนุกสนาน"},
-                {word: "family", type: "n.", meaning: "ครอบครัว"},
-                {word: "far", type: "adv.", meaning: "ไกล"},
-                {word: "fat", type: "adj.", meaning: "อ้วน"},
-                {word: "favorite", type: "adj.", meaning: "เป็นที่ชื่นชอบ"},
-                {word: "fin", type: "n.", meaning: "ครีบ"},
-                {word: "fine", type: "adj., n.", meaning: "ดี, ค่าปรับ"},
-                {word: "finish", type: "v.", meaning: "เสร็จ, สำเร็จ"},
-                {word: "floor", type: "n.", meaning: "พื้นห้อง, ชั้นของตึก"},
-                {word: "fly", type: "v.", meaning: "บิน"},
-                {word: "friend", type: "n.", meaning: "เพื่อน"},
-                {word: "frog", type: "n.", meaning: "กบ"},
-                {word: "gate", type: "n.", meaning: "ประตู"},
-                {word: "get up", type: "v.", meaning: "ตื่น"},
-                {word: "gloves", type: "n.", meaning: "ถุงมือ"},
-                {word: "glue", type: "n.", meaning: "กาว"},
-                {word: "grandma", type: "n", meaning: "คุณย่าหรือคุณยาย"},
-                {word: "grandpa", type: "n", meaning: "คุณปู่หรือคุณตา"},
-                {word: "grape", type: "n.", meaning: "องุ่น"},
-                {word: "group", type: "n.", meaning: "กลุ่ม"},
-                {word: "gum", type: "n.", meaning: "หมากฝรั่ง"},
-                {word: "hand", type: "n.", meaning: "มือ"},
-                {word: "hat", type: "n.", meaning: "หมวก"},
-                {word: "help", type: "v.", meaning: "ช่วยเหลือ"},
-                {word: "hen", type: "n.", meaning: "แม่ไก่"},
-                {word: "hide", type: "v.", meaning: "แอบ, ซ่อน"},
-                {word: "hot", type: "adj.", meaning: "ร้อน"},
-                {word: "hot dog", type: "n", meaning: "ไส้กรอกร้อนๆที่ประกบด้วยขนมปัง"},
-                {word: "hungry", type: "adj.", meaning: "หิวกระหาย"},
-                {word: "idea", type: "n.", meaning: "ความนึกคิด, ความคิดเห็น"},
-                {word: "jam", type: "n.", meaning: "แยม, ผลไม้กวนกับน้ำตาล"},
-                {word: "job", type: "n.", meaning: "งาน, อาชีพ"},
-                {word: "jug", type: "n.", meaning: "เหยือก"},
-                {word: "kite", type: "n.", meaning: "ว่าว"},
-                {word: "knee", type: "n.", meaning: "หัวเข่า"},
-                {word: "knife", type: "n.", meaning: "มีด"},
-                {word: "lady", type: "n.", meaning: "ผู้หญิง สุภาพสตรี"},
-                {word: "left", type: "adj.", meaning: "ข้างซ้าย"},
-                {word: "letter", type: "n.", meaning: "จดหมาย"},
-                {word: "like", type: "v.", meaning: "ชื่นชอบ"},
-                {word: "magic", type: "n.", meaning: "มายากล, เวทย์มนต์"},
-                {word: "make", type: "v.", meaning: "ทำ"},
-                {word: "mango", type: "n.", meaning: "มะม่วง"},
-                {word: "match", type: "n.", meaning: "การเข้าชุดกัน"},
-                {word: "music", type: "n.", meaning: "ดนตรี"},
-                {word: "new", type: "adj.", meaning: "ใหม่ สด แปลก"},
-                {word: "notebook", type: "n.", meaning: "สมุดบันทึก"}
-            ],
-            3: [
-                {word: "act", type: "n.", meaning: "การแสดง,การกระทำ"},
-                {word: "air", type: "n.", meaning: "อากาศ"},
-                {word: "airplane", type: "n.", meaning: "เครื่องบิน"},
-                {word: "around", type: "adv.", meaning: "โดยรอบ,รอบด้าน"},
-                {word: "art", type: "n.", meaning: "ศิลปะ"},
-                {word: "basket", type: "n.", meaning: "ตะกร้า"},
-                {word: "bathroom", type: "n.", meaning: "ห้องน้ำ"},
-                {word: "beautiful", type: "adj.", meaning: "สวย"},
-                {word: "bedroom", type: "n.", meaning: "ห้องนอน"},
-                {word: "beef", type: "n.", meaning: "เนื้อวัว"},
-                {word: "bell", type: "n.", meaning: "กระดิ่ง,ระฆัง"},
-                {word: "bicycle", type: "n.", meaning: "รถจักรยาน"},
-                {word: "bike", type: "n.", meaning: "รถจักรยาน"},
-                {word: "blackboard", type: "n.", meaning: "กระดานดำ"},
-                {word: "blank", type: "adj.", meaning: "ว่าง ,ว่างเปล่า"},
-                {word: "body", type: "n.", meaning: "ร่างกาย"},
-                {word: "bookcase", type: "n.", meaning: "ชั้นหนังสือ"},
-                {word: "borrow", type: "v.", meaning: "ขอยืม"},
-                {word: "bottom", type: "n.", meaning: "ก้น"},
-                {word: "breakfast", type: "n.", meaning: "อาหารมื้อเช้า"},
-                {word: "bug", type: "n.", meaning: "แมลงปีกแข็ง"},
-                {word: "buy", type: "v.", meaning: "ซื้อ"},
-                {word: "cabbage", type: "n.", meaning: "กะหล่ำปลี"},
-                {word: "carrot", type: "n.", meaning: "แครรอท"},
-                {word: "castle", type: "n.", meaning: "ปราสาท"},
-                {word: "chalk", type: "n.", meaning: "ชอล์ก"},
-                {word: "chance", type: "n.", meaning: "โอกาส,โชค"},
-                {word: "change", type: "v.", meaning: "เปลี่ยน,สลับ"}
-            ],
-            4: [
-                {word: "ache", type: "n.", meaning: "อาการปวด"},
-                {word: "afternoon", type: "n.", meaning: "เวลาบ่าย"},
-                {word: "airport", type: "n.", meaning: "สนามบิน"},
-                {word: "autumn", type: "n.", meaning: "ฤดูใบไม้ร่วง"},
-                {word: "awake", type: "v.", meaning: "ตื่นนอน"},
-                {word: "baht", type: "n.", meaning: "หน่วยเงินตราของไทย"},
-                {word: "bamboo", type: "n.", meaning: "ต้นไผ่, ไม้ไผ่"},
-                {word: "barbecue", type: "n.", meaning: "เตาย่างอาหารกลางแจ้ง"},
-                {word: "beak", type: "n.", meaning: "จงอยปากนก"},
-                {word: "beverage", type: "n.", meaning: "เครื่องดื่ม (ที่ไม่ใช่ผสมน้ำเปล่า)"},
-                {word: "bomb", type: "n.", meaning: "ระเบิด"},
-                {word: "blanket", type: "n.", meaning: "ผ้าห่ม"},
-                {word: "blind", type: "adj.", meaning: "ซึ่งตาบอด"},
-                {word: "blouse", type: "n.", meaning: "เสื้อผ้าสตรี"},
-                {word: "bone", type: "n.", meaning: "กระดูก, ก้าง"},
-                {word: "bored", type: "adj.", meaning: "ทำให้เบื่อ"},
-                {word: "boxing", type: "n.", meaning: "การชกมวย"},
-                {word: "branch", type: "n.", meaning: "กิ่งไม้, สาขา"},
-                {word: "brush", type: "n./v.", meaning: "พู่กัน, แปรง"},
-                {word: "buffalo", type: "n.", meaning: "ควาย"},
-                {word: "butter", type: "n.", meaning: "เนยเหลว, สิ่งที่คล้ายเนย"},
-                {word: "camel", type: "n.", meaning: "อูฐ"},
-                {word: "camp", type: "n.", meaning: "ค่ายพัก, เพิงพัก"},
-                {word: "canteen", type: "n.", meaning: "ร้านอาหารในค่ายทหารหรือโรงเรียน"},
-                {word: "careless", type: "adj.", meaning: "ประมาท, สะเพร่า"},
-                {word: "centimeter", type: "n.", meaning: "หน่วยวัด, เซนติเมตร"},
-                {word: "cheap", type: "adj.", meaning: "ถูก, ราคาถูก"},
-                {word: "chin", type: "n.", meaning: "คาง"},
-                {word: "chocolate", type: "n.", meaning: "ชอกโกแลต"}
-            ],
-            5: [
-                {word: "accountant", type: "n.", meaning: "พนักงานบัญชี"},
-                {word: "actor", type: "n.", meaning: "นักแสดงชาย"},
-                {word: "actress", type: "n.", meaning: "นักแสดงหญิง"},
-                {word: "adventure", type: "n.", meaning: "การผจญภัย"},
-                {word: "appear", type: "v.", meaning: "ปรากฏ"},
-                {word: "area", type: "n.", meaning: "พื้นที่ บริเวณ"},
-                {word: "author", type: "n.", meaning: "นักเขียน, นักประพันธ์"},
-                {word: "behind", type: "adv./prep.", meaning: "ข้างหลัง, ด้านหลัง"},
-                {word: "blow", type: "v.", meaning: "พัด, เป่า,พ่น"},
-                {word: "bridge", type: "n.", meaning: "สะพาน"},
-                {word: "buddy", type: "n.", meaning: "เพื่อนคู่หู"},
-                {word: "build", type: "v.", meaning: "สร้าง, ก่อสร้าง"},
-                {word: "burn", type: "v.", meaning: "เผาไหม้"},
-                {word: "busy", type: "adj.", meaning: "ยุ่ง, ไม่ว่าง"},
-                {word: "button", type: "n.", meaning: "กระดุม"},
-                {word: "calculator", type: "n.", meaning: "เครื่องคิดเลข"},
-                {word: "calendar", type: "n.", meaning: "ปฏิทิน"},
-                {word: "camera", type: "n.", meaning: "กล้องถ่ายภาพ"},
-                {word: "canal", type: "n.", meaning: "คลองขุด, ร่องน้ำ"},
-                {word: "caramel", type: "n.", meaning: "คาราเมล, ลูกกวาด น้ำตาลไหม้"},
-                {word: "careful", type: "adj.", meaning: "ระมัดระวัง"},
-                {word: "career", type: "n.", meaning: "อาชีพ"},
-                {word: "carpet", type: "n.", meaning: "พรม"},
-                {word: "carry", type: "v.", meaning: "ถือ, แบก, หิ้ว"},
-                {word: "CD player", type: "n.", meaning: "เครื่องเล่นแผ่นเสียง"},
-                {word: "cell", type: "n.", meaning: "ห้องขัง, กุฏิ, เซลล์ของสิ่งมีชีวิต"},
-                {word: "center", type: "adj.", meaning: "ใจกลาง, ศูนย์กลาง"},
-                {word: "cereal", type: "n.", meaning: "อาหารเช้าที่ทำจากธัญพืช"},
-                {word: "chopsticks", type: "n.", meaning: "ตะเกียบ"}
-            ],
-            6: [
-                {word: "advertisement", type: "n.", meaning: "การโฆษณา"},
-                {word: "aeroplane", type: "n.", meaning: "เครื่องบิน"},
-                {word: "afraid", type: "adj.", meaning: "กลัว"},
-                {word: "ahead", type: "adj", meaning: "ข้างหน้า"},
-                {word: "amusement", type: "n.", meaning: "สันทนาการ,ความสนุกสนาน"},
-                {word: "ancient", type: "adj.", meaning: "เก่าแก่,โบราณ"},
-                {word: "animate", type: "v.", meaning: "เคลื่อนไหว,มีชีวิต"},
-                {word: "aquarium", type: "n.", meaning: "ตู้ปลา"},
-                {word: "architect", type: "n.", meaning: "สถาปนิก"},
-                {word: "arrange", type: "v.", meaning: "จัด,เตรียม"},
-                {word: "arrive", type: "v.", meaning: "มา,มาถึง"},
-                {word: "astronaut", type: "n.", meaning: "นักบินอวกาศ"},
-                {word: "astronomy", type: "n.", meaning: "วิชาดาราศาสตร์"},
-                {word: "attraction", type: "n.", meaning: "การดึงดูด, เสน่ห์"},
-                {word: "autograph", type: "n.", meaning: "ลายเซ็นต์ของผู้มีชื่อเสียง"},
-                {word: "backpack", type: "n.", meaning: "นักเดินทางไกลโดยมีเป้สะพายหลัง"},
-                {word: "beat", type: "v.", meaning: "ตี,เฆี่ยน"},
-                {word: "bill", type: "n.", meaning: "ใบแจ้งหนี้"},
-                {word: "biography", type: "n.", meaning: "ชีวประวัติ"},
-                {word: "bleed", type: "v.", meaning: "เลือดไหล"},
-                {word: "bracelet", type: "n.", meaning: "สร้อยข้อมือ, กำไลข้อมือ"},
-                {word: "brain", type: "n.", meaning: "สมอง"},
-                {word: "brave", type: "adj.", meaning: "กล้าหาญ"},
-                {word: "breath", type: "n.", meaning: "ลมหายใจ"},
-                {word: "bride", type: "n.", meaning: "เจ้าสาว"},
-                {word: "brilliant", type: "adj.", meaning: "ฉลาดมาก,ปราดเปรื่อง"},
-                {word: "brother in law", type: "n.", meaning: "พี่เขย,น้องเขย"},
-                {word: "Buddhist", type: "n.", meaning: "พุทธศาสนิกชน"}
-            ]
-        };
-
-        // ตัวแปรเกม
-        let currentGrade = 1;
-        let currentWords = [];
-        let currentIndex = 0;
-        let correctCount = 0;
-        let wrongCount = 0;
-        let isFlipped = false;
-        let studyMode = false;
-
-        // Elements
-        const gradeSelector = document.getElementById('gradeSelector');
-        const gameArea = document.getElementById('gameArea');
-        const results = document.getElementById('results');
-        const flashcard = document.getElementById('flashcard');
-        const word = document.getElementById('word');
-        const wordType = document.getElementById('wordType');
-        const meaning = document.getElementById('meaning');
-        const correctScore = document.getElementById('correctScore');
-        const wrongScore = document.getElementById('wrongScore');
-        const currentCard = document.getElementById('currentCard');
-        const progressFill = document.getElementById('progressFill');
-        const correctBtn = document.getElementById('correctBtn');
-        const wrongBtn = document.getElementById('wrongBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const studyModeCheckbox = document.getElementById('studyMode');
-        const restartBtn = document.getElementById('restartBtn');
-        const finalScore = document.getElementById('finalScore');
-        const resultMessage = document.getElementById('resultMessage');
-
-        // Event Listeners
-        document.querySelectorAll('.grade-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                currentGrade = parseInt(e.target.dataset.grade);
-                startGame();
+        // Simple LINE LIFF initialization (optional)
+        if (typeof liff !== 'undefined') {
+            liff.init({ 
+                liffId: '2006490627-BmRG1zAK' // Replace with your LIFF ID
+            }).then(() => {
+                console.log('LIFF initialized');
+            }).catch(err => {
+                console.log('LIFF init failed:', err);
             });
-        });
-
-        flashcard.addEventListener('click', () => {
-            if (!studyMode) {
-                flipCard();
-            }
-        });
-
-        correctBtn.addEventListener('click', () => markCorrect());
-        wrongBtn.addEventListener('click', () => markWrong());
-        nextBtn.addEventListener('click', () => nextCard());
-        restartBtn.addEventListener('click', () => restart());
-
-        studyModeCheckbox.addEventListener('change', (e) => {
-            studyMode = e.target.checked;
-            updateCard();
-        });
-
-        // ฟังก์ชันหลัก
-        function startGame() {
-            currentWords = shuffleArray([...vocabularyData[currentGrade]]);
-            currentIndex = 0;
-            correctCount = 0;
-            wrongCount = 0;
-            isFlipped = false;
-            
-            gradeSelector.style.display = 'none';
-            gameArea.style.display = 'block';
-            results.style.display = 'none';
-            
-            updateCard();
-            updateScore();
-            updateProgress();
         }
-
-        function updateCard() {
-            if (currentIndex >= currentWords.length) {
-                showResults();
-                return;
-            }
-
-            const currentWord = currentWords[currentIndex];
-            word.textContent = currentWord.word;
-            wordType.textContent = currentWord.type;
-            meaning.textContent = currentWord.meaning;
-            
-            isFlipped = false;
-            flashcard.classList.remove('flipped');
-            
-            if (studyMode) {
-                meaning.style.display = 'block';
-                document.querySelector('.flip-hint').style.display = 'none';
-            } else {
-                meaning.style.display = 'none';
-                document.querySelector('.flip-hint').style.display = 'block';
-            }
-        }
-
-        function flipCard() {
-            if (!isFlipped) {
-                meaning.style.display = 'block';
-                flashcard.classList.add('flipped');
-                isFlipped = true;
-            }
-        }
-
-        function markCorrect() {
-            correctCount++;
-            updateScore();
-            nextCard();
-        }
-
-        function markWrong() {
-            wrongCount++;
-            updateScore();
-            nextCard();
-        }
-
-        function nextCard() {
-            currentIndex++;
-            updateCard();
-            updateProgress();
-        }
-
-        function updateScore() {
-            correctScore.textContent = correctCount;
-            wrongScore.textContent = wrongCount;
-            currentCard.textContent = currentIndex + 1;
-        }
-
-        function updateProgress() {
-            const progress = (currentIndex / currentWords.length) * 100;
-            progressFill.style.width = progress + '%';
-        }
-
-        function showResults() {
-            gameArea.style.display = 'none';
-            results.style.display = 'block';
-            
-            const total = correctCount + wrongCount;
-            const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-            
-            finalScore.textContent = percentage + '%';
-            
-            if (percentage >= 90) {
-                resultMessage.textContent = '🌟 ยอดเยี่ยมมาก!';
-            } else if (percentage >= 80) {
-                resultMessage.textContent = '👏 เก่งมาก!';
-            } else if (percentage >= 70) {
-                resultMessage.textContent = '👍 ดีมาก!';
-            } else if (percentage >= 60) {
-                resultMessage.textContent = '😊 ดี ต้องฝึกต่อไป!';
-            } else {
-                resultMessage.textContent = '💪 ต้องฝึกฝนเพิ่มเติม!';
-            }
-        }
-
-        function restart() {
-            gradeSelector.style.display = 'block';
-            gameArea.style.display = 'none';
-            results.style.display = 'none';
-            
-            document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
-        }
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        // เริ่มต้น
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎮 เกมส์บันชีคำศัพท์พร้อมใช้งาน!');
-        });
     </script>
 </body>
 </html>
